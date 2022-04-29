@@ -1,0 +1,24 @@
+{
+  "name": "typescript-cli-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsc --watch",
+    "script": "node ./lib/index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "dependencies": {
+    "@types/inquirer": "^8.2.1",
+    "inquirer": "^8.2.4"
+  }
+}
