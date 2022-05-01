@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
-import { validateFolder } from './Validations.js'
+import { validateFolder, validateProjectName } from './Validations.js'
+import process from 'process'
 
 type Output = {
     answer: string | undefined
@@ -10,7 +11,8 @@ type QuestionInput = {
     defaultValue?: string,
     choices?: Array<string>
     type?: string,
-    validation?: string
+    validation?: string,
+    question_type?: string,
 }
 
 
@@ -22,20 +24,16 @@ export async function createQuestion(args: QuestionInput): Promise<Output>
         type: args?.type ? args.type : "input",
         name: 'questionAnswer',
         message: args.question,
+        prefix: '$',
         ...args.choices ? {choices: args.choices}: null,
         ...args.defaultValue ? {default: args.defaultValue}: null,
-        ...args.validation ? {validate: args.validation === 'folder' ? validateFolder : null}:null
+        ...{validate: args?.validation ? (args.validation === 'folder' ? validateFolder : (args.validation === 'projectName' ? validateProjectName : "")) : null}
     }).then(data => {
         response = data.questionAnswer
+        if(args?.question_type === 'project_path'){
+            if(!response?.includes('/') || !response?.includes('\\')) response = `${process.cwd()}/${data.questionAnswer}`
+        }
     })
 
     return {answer: response}
-}
-
-
-async function getValidation(type: string)
-{   
-    console.log("validationtype", type)
-    if(type === 'folder') validateFolder
-
 }
