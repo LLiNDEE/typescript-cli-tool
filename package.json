@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@types/inquirer": "^8.2.1",
+    "cli-color": "^2.0.2",
     "inquirer": "^8.2.4"
   }
 }
