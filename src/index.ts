@@ -1,13 +1,9 @@
 import inquirer from "inquirer";
 import { createQuestion } from './utils/Question.js';
+import { project } from "./types/types.js";
+import { GenerateTemplate } from "./utils/GenerateTemplate.js";
 
 const templates = ["Typescript", "NodeJS", "HTML/CSS/JS"];
-
-type project = {
-    type: string | undefined,
-    path: string | undefined,
-    name: string | undefined,
-}
 
 async function index(): Promise<void>
 {
@@ -29,6 +25,11 @@ async function index(): Promise<void>
     const projectpath = await createQuestion({question: "Enter folder name or path", validation: "folder", defaultValue: "Current path", question_type: "project_path"})
     project.path = projectpath.answer
     // console.log("Type: ", typeOfProject)
+
+    const response = await GenerateTemplate(project);
+    
+    if(!response) return console.log("Could not generate template! :(")
+
     console.log(project)
 
 }

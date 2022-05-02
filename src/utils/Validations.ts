@@ -40,7 +40,7 @@ export async function validateFolder(path: string): Promise<string | boolean>
             resolve(false);
         })
     });
-
+    if(path === '.') return true
     return await folder ? `A directory called ${path} already exists` : true;
 }
 

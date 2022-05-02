@@ -1,20 +1,7 @@
 import inquirer from "inquirer";
-import { validateFolder, validateProjectName } from './Validations.js'
 import process from 'process'
-
-type Output = {
-    answer: string | undefined
-}
-
-type QuestionInput = {
-    question: string,
-    defaultValue?: string,
-    choices?: Array<string>
-    type?: string,
-    validation?: string,
-    question_type?: string,
-}
-
+import { validateFolder, validateProjectName } from './Validations.js'
+import { QuestionInput, Output } from "../types/types.js";
 
 export async function createQuestion(args: QuestionInput): Promise<Output>
 {   
@@ -31,7 +18,8 @@ export async function createQuestion(args: QuestionInput): Promise<Output>
     }).then(data => {
         response = data.questionAnswer
         if(args?.question_type === 'project_path'){
-            if(!response?.includes('/') || !response?.includes('\\')) response = `${process.cwd()}/${data.questionAnswer}`
+            if((!response?.includes('/') || !response?.includes('\\')) && response != '.') response = `${process.cwd()}/${data.questionAnswer}`
+            if(response == '.') response = `${process.cwd()}/`
         }
     })
 
