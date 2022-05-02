@@ -18,8 +18,10 @@
     "lib/**/*"
   ],
   "dependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^8.2.1",
     "cli-color": "^2.0.2",
+    "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4"
   }
 }
