@@ -31,10 +31,16 @@ async function index(): Promise<void>
 
     const response = await GenerateTemplate(project);
     
-    if(!response) return console.log("Could not generate template! :(")
+    if(typeof response !== 'boolean' && response.exist){
+        return console.log(clc.yellow.bold("WARNING:"), clc.yellowBright(`A ${response.type} named ${response.name} already exist in ${project.path}`));
+    }
 
-    console.log(project)
+    if(typeof response === 'boolean' && !response){
+        return console.log(clc.red.bold("ERROR:"), clc.redBright("Could not generate template! :("))
+    }
 
+    if(typeof response === 'boolean' && response) return console.log(clc.green.bold("SUCCESS:"), clc.greenBright(`A ${project.type} template was generated in ${project.path}! :)`));
+    
 }
 
 index();
