@@ -11,23 +11,19 @@ export type Output = {
 export type QuestionInput = {
     question: string,
     defaultValue?: string,
-    choices?: Array<string>
+    choices?: Array<string> | boolean
     type?: string,
     validation?: string,
     question_type?: string,
 }
 
-export const templateNames = {
-    typescript: 'typescript',
-    ['html-css-js']: 'html-css-js',
+export type filesInTemplate = {
+    folders: Array<string> | undefined,
+    files: Array<string> | undefined,
 }
 
-export const templates = {
-    [templateNames.typescript]: {
-        files: ['index.ts', 'tsconfig.json', 'package.json'],
-        folders: ['src', 'lib']
-    }
-} as const
-
-export type t = typeof templateNames;
-export type template = keyof t
+export type duplicateData = {
+    exist: boolean,
+    name: string | undefined,
+    type: string | undefined,
+}

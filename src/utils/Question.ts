@@ -20,6 +20,7 @@ export async function createQuestion(args: QuestionInput): Promise<Output>
         if(args?.question_type === 'project_path'){
             if((!response?.includes('/') || !response?.includes('\\')) && response != '.') response = `${process.cwd()}/${data.questionAnswer}`
             if(response == '.') response = `${process.cwd()}/`
+            if(response?.includes(":")) response = data.questionAnswer
         }
     })
 

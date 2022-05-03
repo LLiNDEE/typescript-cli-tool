@@ -1,18 +1,22 @@
-import inquirer from "inquirer";
+import clc from 'cli-color';
 import { createQuestion } from './utils/Question.js';
 import { project } from "./types/types.js";
-import { GenerateTemplate } from "./utils/GenerateTemplate.js";
+import { GenerateTemplate, getTemplateNames } from "./utils/HandleTemplates.js";
 
-const templates = ["Typescript", "NodeJS", "HTML/CSS/JS"];
+
 
 async function index(): Promise<void>
-{
+{   
+
+    const templates = await getTemplateNames();
 
     const project: project = {
         type: undefined,
         path: undefined,
         name: undefined,
     }
+
+    if(!templates) return console.log(clc.red.bold("ERROR:"), clc.redBright("Failed to load templates!\r\n"));
 
     const typeOfProject = await createQuestion({question: "What type of project do you want to create?", type: "list", choices: templates});
     project.type = typeOfProject.answer
@@ -24,14 +28,19 @@ async function index(): Promise<void>
 
     const projectpath = await createQuestion({question: "Enter folder name or path", validation: "folder", defaultValue: "Current path", question_type: "project_path"})
     project.path = projectpath.answer
-    // console.log("Type: ", typeOfProject)
 
     const response = await GenerateTemplate(project);
     
-    if(!response) return console.log("Could not generate template! :(")
+    if(typeof response !== 'boolean' && response.exist){
+        return console.log(clc.yellow.bold("WARNING:"), clc.yellowBright(`A ${response.type} named ${response.name} already exist in ${project.path}`));
+    }
 
-    console.log(project)
+    if(typeof response === 'boolean' && !response){
+        return console.log(clc.red.bold("ERROR:"), clc.redBright("Could not generate template! :("))
+    }
 
+    if(typeof response === 'boolean' && response) return console.log(clc.green.bold("SUCCESS:"), clc.greenBright(`A ${project.type} template was generated in ${project.path}! :)`));
+    
 }
 
 index();
