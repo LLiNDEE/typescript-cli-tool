@@ -13,25 +13,47 @@ export async function GenerateTemplate(project: project): Promise<boolean | dupl
         const duplicatesExist = await checkIfFilesExist(templateFilesAndFolders, project.path);
         if(!duplicatesExist || duplicatesExist.exist) return duplicatesExist
 
-        // fs.copySync(path.resolve(path.dirname(''),`./templates/${project.type}`), project.path!)
-        // findFiles(project.type!)
+        const folderExist = checkIfFolderExist(project.path)
 
+        if(!folderExist){
+            fs.mkdirSync(project.path);
+        }
 
+        fs.copySync(path.resolve(path.dirname(''),`./templates/${project.type}`), project.path!)
+        
+        if(templateFilesAndFolders.files?.includes('package.json')){
+            fs.readFile(`${project.path}/package.json`, 'utf8', function (err,data) {
+                if (err) {
+                  return false;
+                }
+                const result = data.replace("project_name", `${project.name}`);
+              
+                fs.writeFile(`${project.path}/package.json`, result, 'utf8', function (err) {
+                   if (err) return false;
+                });
+              });
+        }
+        
+        return true;
 
    }catch(error){
+       console.log(error);
        return false;
    }
 
     return true;
 }
 
-function readFile(filepath: string): string
+function checkIfFolderExist(folderpath: string): boolean
 {
+    try{
 
-    
+        const folderExist = fs.existsSync(`${folderpath}`)
 
-    return ""
-
+        return folderExist
+    }catch(error){
+        return false
+    }
 }
 
 export async function getTemplateNames(): Promise<string[] | boolean> 
@@ -54,8 +76,8 @@ async function getFilesInTemplate(templateName: string | undefined): Promise<fil
 {
     try{
         const filesInTemplate: filesInTemplate = {
-            folders: undefined,
-            files: undefined,
+            folders: [],
+            files: [],
         }
     
         fs.readdirSync((path.dirname(''),`./templates/${templateName}`), {withFileTypes: true}).forEach(item =>{
@@ -65,7 +87,7 @@ async function getFilesInTemplate(templateName: string | undefined): Promise<fil
                 filesInTemplate.files?.push(item.name);
             }
         })
-    
+
         return filesInTemplate
     }catch(error){
         return false
@@ -87,7 +109,7 @@ async function checkIfFilesExist(templateFiles: filesInTemplate, path: string)
         if(folders !== undefined){
             folders.forEach(f => {
                 if(duplicateData.exist) return;
-                const exist = fs.existsSync(`${path}/${f}`)
+                const exist = fs.existsSync(`${path}${f}`)
                 if(exist){
                     duplicateData.exist = true
                     duplicateData.name = f,
@@ -101,7 +123,7 @@ async function checkIfFilesExist(templateFiles: filesInTemplate, path: string)
             files.forEach(f => {
                 if(duplicateData.exist) return;
 
-                const exist = fs.existsSync(`${path}/${f}`)
+                const exist = fs.existsSync(`${path}${f}`)
                 if(exist){
                     duplicateData.exist = true
                     duplicateData.name = f
